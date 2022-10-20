@@ -64,6 +64,7 @@ private:
     /**********************************************************************/
     ComMonitor monitor;
     ComRobot robot;
+	Camera camera;
     int robotStarted = 0;
     int move = MESSAGE_ROBOT_STOP;
     int watchDog;
@@ -78,6 +79,8 @@ private:
     RT_TASK th_startRobot;
     RT_TASK th_move;
     RT_TASK th_battery;
+	RT_TASK th_WDKeepAlive;
+	RT_TASK th_camera;
     
     /**********************************************************************/
     /* Mutex                                                              */
@@ -86,6 +89,8 @@ private:
     RT_MUTEX mutex_robot;
     RT_MUTEX mutex_robotStarted;
     RT_MUTEX mutex_move;
+	RT_MUTEX mutex_watchdog;
+	RT_MUTEX mutex_camera;
 
     /**********************************************************************/
     /* Semaphores                                                         */
@@ -139,6 +144,16 @@ private:
      * @brief Thread handling battery level log
      */
     void BatteryTask(void* arg);
+
+    /**
+     * @brief Thread handling keepalive of the watchdog
+     */
+    void WDKeepAliveTask(void* arg);
+
+    /**
+     * @brief Thread handling the camera
+     */
+    void CameraTask(void* arg);
     
     /**********************************************************************/
     /* Queue services                                                     */
