@@ -68,6 +68,10 @@ private:
     int robotStarted = 0;
     int move = MESSAGE_ROBOT_STOP;
     int watchDog;
+    bool arena_search = false;
+    bool arena_responded = true;
+    bool compute_position = false;
+    Arena* arena = nullptr;
     
     /**********************************************************************/
     /* Tasks                                                              */
@@ -91,6 +95,8 @@ private:
     RT_MUTEX mutex_move;
 	RT_MUTEX mutex_watchdog;
 	RT_MUTEX mutex_camera;
+	RT_MUTEX mutex_arena;
+	RT_MUTEX mutex_position;
 
     /**********************************************************************/
     /* Semaphores                                                         */
@@ -110,6 +116,8 @@ private:
     /**********************************************************************/
     /* Tasks' functions                                                   */
     /**********************************************************************/
+
+
     /**
      * @brief Thread handling server communication with the monitor.
      */
@@ -154,6 +162,7 @@ private:
      * @brief Thread handling the camera
      */
     void CameraTask(void* arg);
+
     
     /**********************************************************************/
     /* Queue services                                                     */
@@ -181,6 +190,12 @@ private:
      * @return Message recieved from robot if communication succeeds in less than 3 tries
      **/
      Message* SendToRobot(Message* msg);
+    /**********************************************************************/
+    /* Other utility functions                                            */
+    /**********************************************************************/
+
+     void startTask(RT_TASK* task, void(Tasks::*method)(void*));
+
 
 };
 
