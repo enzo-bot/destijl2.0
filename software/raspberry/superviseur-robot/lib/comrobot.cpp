@@ -315,7 +315,11 @@ string ComRobot::MessageToString(Message *msg) {
             s.append(to_string(((MessageInt*) msg)->GetValue()));
             break;
         default:
-            cerr << "[" << __PRETTY_FUNCTION__ << "] Invalid message for robot (" << msg->ToString() << ")" << endl << flush;
+			if (msg == nullptr) {
+				cerr << "[" << __PRETTY_FUNCTION__ << "] Invalid message for robot (nullptr)" << endl << flush;
+			} else {
+				cerr << "[" << __PRETTY_FUNCTION__ << "] Invalid message for robot (" << msg->ToString() << ")" << endl << flush;
+			}
             throw std::runtime_error{"Invalid message"};
     }
 
