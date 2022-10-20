@@ -330,6 +330,12 @@ void Tasks::ReceiveFromMonTask(void *arg) {
 			}
 			rt_mutex_release(&mutex_camera);
 			this->camera.Close();
+			if (this->camera.IsOpen()) {
+				msgSend = new Message(MESSAGE_ANSWER_NACK);
+			} else {
+				msgSend = new Message(MESSAGE_ANSWER_ACK);
+			}
+			WriteInQueue(&q_messageToMon, msgSend); // msgSend will be deleted by sendToMon
         } else if (msgRcv->CompareID(MESSAGE_ROBOT_COM_CLOSE)) {
 			this->SendToRobot(ComRobot::Reset());
 			rt_mutex_acquire(&mutex_watchdog, TM_INFINITE);
@@ -532,7 +538,7 @@ void Tasks::CameraTask(void* arg) {
 		FUNC_NAME;
 		rt_mutex_acquire(&mutex_camera,TM_INFINITE);
 		if (this->camera.IsOpen()) {
-			*picture = this->camera.Grab();
+			picture = new Img(this->camera.Grab());
 			WriteInQueue(&q_messageToMon, new MessageImg(MESSAGE_CAM_IMAGE, picture)); // msgSend will be deleted by sendToMon
 		}
 		rt_mutex_release(&mutex_camera);
