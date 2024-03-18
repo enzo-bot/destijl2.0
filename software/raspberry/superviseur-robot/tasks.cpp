@@ -434,6 +434,7 @@ Message* Tasks::SendToRobot(Message* msg) {
     if (!succeed) {
         ret = nullptr;
         robot.Close();
+        this->WriteInQueue(&q_messageToMon, new Message(MESSAGE_ANSWER_COM_ERROR));
     }
     return ret;
 }
