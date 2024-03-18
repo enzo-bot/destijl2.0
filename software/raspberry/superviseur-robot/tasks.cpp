@@ -276,8 +276,8 @@ void Tasks::ReceiveFromMonTask(void *arg) {
             move = msgRcv->GetID();
             rt_mutex_release(&mutex_move);
         } else if (msgRcv->CompareID(MESSAGE_ROBOT_BATTERY_GET)) {
-            Message* batLvl = robot.Write(ComRobot::GetBattery());
-            this->WriteInQueue(&q_messageToMon, batLvl);
+            Message* ret = this->SendToRobot(ComRobot::GetBattery());
+            this->WriteInQueue(&q_messageToMon, ret);
         }
         delete(msgRcv); // mus be deleted manually, no consumer
     }
@@ -418,3 +418,22 @@ Message *Tasks::ReadInQueue(RT_QUEUE *queue) {
     return msg;
 }
 
+
+Message* Tasks::SendToRobot(Message* msg) {
+    int counter = 0;
+    bool succeed = false;
+    Message* ret;
+    while (counter < 3 && !succeed) {
+        ret = robot.Write(msg);
+        if (ret->CompareID(MESSAGE_ANSWER_ROBOT_TIMEOUT)) {
+            counter++;
+        } else {
+            succeed = true;
+        }
+    }
+    if (!succeed) {
+        ret = nullptr;
+        robot.Close();
+    }
+    return ret;
+}

@@ -148,6 +148,16 @@ private:
      * @return Message read
      */
     Message *ReadInQueue(RT_QUEUE *queue);
+    /**********************************************************************/
+    /* Com with cobot util                                                */
+    /**********************************************************************/
+
+    /**
+     * Handles retries and loss of communication
+     * @param Message to send to the robot
+     * @return Message recieved from robot if communication succeeds in less than 3 tries
+     **/
+     Message* SendToRobot(Message* msg);
 
 };
 
