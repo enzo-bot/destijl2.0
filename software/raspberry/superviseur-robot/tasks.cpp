@@ -276,8 +276,13 @@ void Tasks::ReceiveFromMonTask(void *arg) {
             move = msgRcv->GetID();
             rt_mutex_release(&mutex_move);
         } else if (msgRcv->CompareID(MESSAGE_ROBOT_BATTERY_GET)) {
-            Message* ret = this->SendToRobot(ComRobot::GetBattery());
-            this->WriteInQueue(&q_messageToMon, ret);
+            cout << "Trying to get Robot battery Level" << endl << flush;
+            Message* batLvl = this->SendToRobot(ComRobot::GetBattery());
+            if (batLvl == nullptr) {
+                cout << "Communication with Robot lost" << endl << flush;
+            } else {
+                this->WriteInQueue(&q_messageToMon, batLvl);
+            }
         }
         delete(msgRcv); // mus be deleted manually, no consumer
     }
