@@ -275,6 +275,9 @@ void Tasks::ReceiveFromMonTask(void *arg) {
             rt_mutex_acquire(&mutex_move, TM_INFINITE);
             move = msgRcv->GetID();
             rt_mutex_release(&mutex_move);
+        } else if (msgRcv->CompareID(MESSAGE_ROBOT_BATTERY_GET)) {
+            Message* batLvl = robot.Write(ComRobot::GetBattery());
+            this->WriteInQueue(&q_messageToMon, batLvl);
         }
         delete(msgRcv); // mus be deleted manually, no consumer
     }
