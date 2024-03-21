@@ -20,12 +20,13 @@
 
 // Déclaration des priorités des taches
 #define PRIORITY_TSERVER 30
+#define PRIORITY_TRECEIVEFROMMON 25
+#define PRIORITY_TSENDTOMON 22
+#define PRIORITY_TCAMERA 21
 #define PRIORITY_TOPENCOMROBOT 20
 #define PRIORITY_TMOVE 20
-#define PRIORITY_TSENDTOMON 22
-#define PRIORITY_TRECEIVEFROMMON 25
 #define PRIORITY_TSTARTROBOT 20
-#define PRIORITY_TCAMERA 21
+#define PRIORITY_TBATTERY 20
 
 /*
  * Some remarks:
@@ -123,6 +124,10 @@ void Tasks::Init() {
         cerr << "Error task create: " << strerror(-err) << endl << flush;
         exit(EXIT_FAILURE);
     }
+    if (err = rt_task_create(&th_battery, "th_battery", 0, PRIORITY_TBATTERY, 0)) {
+        cerr << "Error task create: " << strerror(-err) << endl << flush;
+        exit(EXIT_FAILURE);
+    }
     cout << "Tasks created successfully" << endl << flush;
 
     /**************************************************************************************/
@@ -164,6 +169,10 @@ void Tasks::Run() {
         exit(EXIT_FAILURE);
     }
     if (err = rt_task_start(&th_move, (void(*)(void*)) & Tasks::MoveTask, this)) {
+        cerr << "Error task start: " << strerror(-err) << endl << flush;
+        exit(EXIT_FAILURE);
+    }
+    if (err = rt_task_start(&th_battery, (void(*)(void*)) & Tasks::GetBatteryLevel, this)) {
         cerr << "Error task start: " << strerror(-err) << endl << flush;
         exit(EXIT_FAILURE);
     }
@@ -281,6 +290,7 @@ void Tasks::ReceiveFromMonTask(void *arg) {
             if (batLvl == nullptr) {
                 cout << "Communication with Robot lost" << endl << flush;
             } else {
+                cout << "Battery Level Received" << endl << flush;
                 this->WriteInQueue(&q_messageToMon, batLvl);
             }
         }
@@ -389,6 +399,10 @@ void Tasks::MoveTask(void *arg) {
         }
         cout << endl << flush;
     }
+}
+
+void Task::BatteryTask(void *arg) {
+
 }
 
 /**

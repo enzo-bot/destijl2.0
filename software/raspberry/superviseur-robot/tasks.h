@@ -76,12 +76,13 @@ private:
     RT_TASK th_openComRobot;
     RT_TASK th_startRobot;
     RT_TASK th_move;
+    RT_TASK th_battery;
     
     /**********************************************************************/
     /* Mutex                                                              */
     /**********************************************************************/
     RT_MUTEX mutex_monitor;
-    RT_MUTEX mutex_robot;
+    RT_MUTEX mutex_robtt;
     RT_MUTEX mutex_robotStarted;
     RT_MUTEX mutex_move;
 
